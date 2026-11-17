@@ -38,3 +38,26 @@ The run used seed 42 and 200 questions per split. The model and dataset
 revisions were both set to `main`.
 
 Companion project: [Calibration Decision Demo](https://github.com/SeqInference/calibration-decision-demo).
+
+## Cross-model follow-up
+
+Compare SmolLM2-135M-Instruct and SmolLM2-1.7B-Instruct with the same prompt
+templates, MMLU revision, seed, ordered question IDs, and coverage levels.
+The default samples 1,000 questions per split, with a separate calibrator
+for each confidence signal and model fit on validation only.
+
+From the repository folder in PowerShell, using the existing environment:
+
+```powershell
+& "$env:USERPROFILE\.venv\Scripts\python.exe" compare_models.py --limit 1000 --output results/cross-model.json
+```
+
+Use `--device cuda` with a CUDA-enabled PyTorch installation. The script
+resolves Hugging Face revisions to immutable commit IDs before inference and
+records them with package versions. To repeat a run, pass the recorded IDs
+to `--first-revision`, `--second-revision`, and `--data-revision`.
+
+The JSON contains per-question predictions, paired test correctness counts,
+confidence bucket counts by split, Brier score, log loss, and accepted error
+at matched coverage. The main comparison is the share of test questions
+assigned to the 25% confidence bucket. The original pilot is linked above.
